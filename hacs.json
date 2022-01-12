@@ -1,0 +1,7 @@
+{
+  "name": "Delta Solar Cloud",
+  "domains": [
+    "sensor"
+  ],
+  "iot_class": "Cloud Polling"
+}
