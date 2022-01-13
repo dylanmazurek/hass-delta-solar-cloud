@@ -38,15 +38,15 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_SCAN_INTERVAL, default=timedelta(minutes=5)): config_validation.time_period,
         vol.Required(CONF_USERNAME): config_validation.string,
         vol.Required(CONF_PASSWORD): config_validation.string,
-        vol.Optional(CONF_PLANT_ID): config_validation.string,
-        vol.Optional(CONF_SERIAL): config_validation.string,
+        #vol.Optional(CONF_PLANT_ID): config_validation.string,
+        #vol.Optional(CONF_SERIAL): config_validation.string,
     }
 )
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the Delta Solar Cloud sensors."""
 
-    api = DeltaSolarCloud(config.get(CONF_USERNAME), config.get(CONF_PASSWORD), config.get(CONF_PLANT_ID), config.get(CONF_SERIAL))
+    api = DeltaSolarCloud(config.get(CONF_USERNAME), config.get(CONF_PASSWORD), '23400', 'O9Y20300564WB')
 
     async def async_update_data():
         """ fetch data from the Delta Solar Cloud website"""
