@@ -15,10 +15,12 @@ from collections import defaultdict
 class DeltaSolarCloud(object):
     """ Wrapper class for DeltaSolarCloud"""
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, plantid, serial):
         #self.cookie = None
         self.username = username
         self.password = password
+        self.serial = serial
+        self.plantid = plantid
 
     def get_cookie(self):
       """Use api to get data"""
@@ -77,16 +79,18 @@ class DeltaSolarCloud(object):
         'Cookie': 'sec_session_id=' + cookie
       }
 
+      datetimenow = datetime.datetime.now()
+
       payload = {
         'item': 'energy',
         'unit': 'day',
-        'sn': 'O9Y20300564WB',
+        'sn': self.serial,
         'inv_num': '1',
         'is_inv': '1',
-        'year': '2022',
-        'month': '1',
-        'day': '12',
-        'plant_id': '23400',
+        'year': x.strftime("%Y"),
+        'month': x.strftime("%d").lstrip("0"),
+        'day': x.strftime("%m").lstrip("0"),
+        'plant_id': self.plantid,
         'start_date': '2020-11-13',
         'plt_type': '2',
         'mtnm': '1',
@@ -97,14 +101,6 @@ class DeltaSolarCloud(object):
 
       arrayLength = (len(response['sell']) - 1)
       logging.debug(arrayLength)
-      
-
-      # return {
-      #   'sell': response['sell'][arrayLength],
-      #   'buy': response['buy'][arrayLength],
-      #   'con': response['con'][arrayLength],
-      #   'energy': response['tip'][arrayLength]
-      # }
 
       data = {}
 
