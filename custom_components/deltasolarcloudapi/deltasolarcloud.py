@@ -8,15 +8,14 @@ import datetime
 import logging
 from collections import defaultdict
 
-# from const import (
-#     _LOGGER
-# )
+from const import (
+    _LOGGER
+)
 
 class DeltaSolarCloud(object):
     """ Wrapper class for DeltaSolarCloud"""
 
     def __init__(self, username, password, plantid, serial):
-        #self.cookie = None
         self.username = username
         self.password = password
         self.serial = serial
@@ -78,8 +77,8 @@ class DeltaSolarCloud(object):
         'Accept-Language': 'en-AU,en-GB;q=0.9,en-US;q=0.8,en;q=0.7',
         'Cookie': 'sec_session_id=' + cookie
       }
-
-      datetimenow = datetime.datetime.now()
+      
+      now = datetime.datetime.now()
 
       payload = {
         'item': 'energy',
@@ -87,9 +86,9 @@ class DeltaSolarCloud(object):
         'sn': self.serial,
         'inv_num': '1',
         'is_inv': '1',
-        'year': datetimenow.strftime("%Y"),
-        'month': datetimenow.strftime("%d").lstrip("0"),
-        'day': datetimenow.strftime("%m").lstrip("0"),
+        'year': now.strftime('%Y'),
+        'month': now.strftime('%m').lstrip("0"),
+        'day': now.strftime('%d').lstrip("0"),
         'plant_id': self.plantid,
         'start_date': '2020-11-13',
         'plt_type': '2',
@@ -100,7 +99,7 @@ class DeltaSolarCloud(object):
       response = requests.request("POST", url, headers = headers, data = payload).json()
 
       arrayLength = (len(response['sell']) - 1)
-      logging.debug(arrayLength)
+      _LOGGER.debug(arrayLength)
 
       data = {}
 
