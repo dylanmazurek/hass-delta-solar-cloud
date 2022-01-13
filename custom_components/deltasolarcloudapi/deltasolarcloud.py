@@ -8,9 +8,9 @@ import datetime
 import logging
 from collections import defaultdict
 
-from .const import (
-    _LOGGER
-)
+# from .const import (
+#     _LOGGER
+# )
 
 class DeltaSolarCloud(object):
     """ Wrapper class for DeltaSolarCloud"""
@@ -99,7 +99,7 @@ class DeltaSolarCloud(object):
       response = requests.request("POST", url, headers = headers, data = payload).json()
 
       arrayLength = (len(response['sell']) - 1)
-      _LOGGER.debug(arrayLength)
+      #_LOGGER.debug(arrayLength)
 
       data = {}
 
