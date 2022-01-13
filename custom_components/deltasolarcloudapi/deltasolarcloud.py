@@ -59,6 +59,11 @@ class DeltaSolarCloud(object):
 
       cookie = self.get_cookie()
 
+      logger = logging.getLogger("blah")
+      logger.setLevel(logging.INFO)
+
+      logger.error('cookie ' + cookie)
+
       headers = {
         'Host': 'mydeltasolar.deltaww.com',
         'Connection': 'keep-alive',
@@ -99,7 +104,11 @@ class DeltaSolarCloud(object):
       response = requests.request("POST", url, headers = headers, data = payload).json()
 
       arrayLength = (len(response['sell']) - 1)
-      #_LOGGER.debug(arrayLength)
+
+      import json
+      logger.error('payload ' + json.dumps(payload))
+      logger.error('array length ' + str(arrayLength))
+      logger.error('buy ' + str(response['buy'][arrayLength]))
 
       data = {}
 
