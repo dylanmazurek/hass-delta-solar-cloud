@@ -111,6 +111,6 @@ class DeltaSolarCloud(object):
       data['sell'] = (response['sell'][arrayLength], 'mdi:transmission-tower-export', 'kW')
       data['buy'] = (response['buy'][arrayLength], 'mdi:transmission-tower-import', 'kW')
       data['con'] = (response['con'][arrayLength], 'mdi:home', 'kW')
-      data['energy'] = (response['energy'][arrayLength], 'mdi:brightness-7', 'kW')
+      data['energy'] = (response['tip'][arrayLength], 'mdi:brightness-7', 'kW')
 
       return data
