@@ -38,8 +38,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_SCAN_INTERVAL, default=timedelta(minutes=5)): config_validation.time_period,
         vol.Required(CONF_USERNAME): config_validation.string,
         vol.Required(CONF_PASSWORD): config_validation.string,
-        vol.Required(CONF_PLANT_ID): config_validation.string,
-        vol.Required(CONF_SERIAL): config_validation.string,
+        vol.Optional(CONF_PLANT_ID): config_validation.string,
+        vol.Optional(CONF_SERIAL): config_validation.string,
     }
 )
 
