@@ -97,10 +97,17 @@ class DeltaSolarCloud(object):
 
       arrayLength = (len(response['sell']) - 1)
       logging.debug(arrayLength)
+      
 
-      return {
-        'sell': response['sell'][arrayLength],
-        'buy': response['buy'][arrayLength],
-        'con': response['con'][arrayLength],
-        'energy': response['tip'][arrayLength]
-      }
+      # return {
+      #   'sell': response['sell'][arrayLength],
+      #   'buy': response['buy'][arrayLength],
+      #   'con': response['con'][arrayLength],
+      #   'energy': response['tip'][arrayLength]
+      # }
+
+      data = {}
+
+      data['hello'] = (response['sell'][arrayLength], 'bob', 'kW')
+
+      return data
