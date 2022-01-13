@@ -17,7 +17,7 @@ from datetime import timedelta
 import async_timeout
 import homeassistant.helpers.config_validation as config_validation
 import voluptuous as vol
-from homeassistant.components.sensor import SensorEntity, PLATFORM_SCHEMA, STATE_CLASS_MEASUREMENT
+from homeassistant.components.sensor import SensorEntity, PLATFORM_SCHEMA, STATE_CLASS_MEASUREMENT, STATE_CLASS_TOTAL_INCREASING
 from homeassistant.const import (
     CONF_NAME,
     CONF_SCAN_INTERVAL,
@@ -25,8 +25,8 @@ from homeassistant.const import (
     CONF_PASSWORD,
     #CONF_PLANT_ID,
     #CONF_SERIAL,
-    DEVICE_CLASS_TEMPERATURE,
-    DEVICE_CLASS_POWER_FACTOR
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_ENERGY
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
