@@ -112,9 +112,9 @@ class DeltaSolarCloud(object):
 
       data = {}
 
-      data['sell'] = (response['sell'][arrayLength], 'mdi:transmission-tower-export', 'kW')
-      data['buy'] = (response['buy'][arrayLength], 'mdi:transmission-tower-import', 'kW')
-      data['con'] = (response['con'][arrayLength], 'mdi:home', 'kW')
-      data['energy'] = (response['tip'][arrayLength], 'mdi:brightness-7', 'kW')
+      data['sell'] = (response['sell'][arrayLength], 'mdi:transmission-tower-export', 'W')
+      data['buy'] = (response['buy'][arrayLength], 'mdi:transmission-tower-import', 'W')
+      data['con'] = (response['con'][arrayLength], 'mdi:home', 'W')
+      data['energy'] = (response['tip'][arrayLength], 'mdi:brightness-7', 'W')
 
       return data
