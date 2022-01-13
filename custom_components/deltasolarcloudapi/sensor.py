@@ -141,10 +141,10 @@ class DeltaInverterSensor(SensorEntity):
     @property
     def device_class(self):
         """Return the device class of this entity, if any."""
-        if self._unit == '°C':
-            return DEVICE_CLASS_TEMPERATURE
-        elif self._unit == '%':
-            return DEVICE_CLASS_POWER_FACTOR
+        if self._unit == 'kW':
+            return DEVICE_CLASS_POWER
+        elif self._unit == 'Wh':
+            return DEVICE_CLASS_ENERGY
         else:
             return None
 
@@ -153,6 +153,8 @@ class DeltaInverterSensor(SensorEntity):
         """Return the state class of this entity, if any."""
         if self._unit == 'kW':
             return STATE_CLASS_MEASUREMENT
+        elif self._unit == 'Wh':
+            return STATE_CLASS_TOTAL_INCREASING
         else:
             return None
 

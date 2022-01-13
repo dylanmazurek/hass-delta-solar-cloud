@@ -117,4 +117,35 @@ class DeltaSolarCloud(object):
       data['con'] = (abs(response['con'][arrayLength]), 'mdi:home', 'W')
       data['energy'] = (response['tip'][arrayLength], 'mdi:brightness-7', 'W')
 
+      payload2 = {
+        'item': 'energy',
+        'unit': 'month',
+        'sn': self.serial,
+        'inv_num': '1',
+        'is_inv': '1',
+        'year': now.strftime('%Y'),
+        'month': now.strftime('%m').lstrip("0"),
+        'day': now.strftime('%d').lstrip("0"),
+        'plant_id': self.plantid,
+        'start_date': '2020-11-13',
+        'plt_type': '2',
+        'mtnm': '1',
+        'timezone': '10'
+      }
+
+      response = requests.request("POST", url, headers = headers, data = payload2).json()
+
+      date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
+      indexOfMonth = response['ts'].index(date)
+
+      import json
+      logger.error('payload ' + json.dumps(payload2))
+      logger.error('array length ' + str(indexOfMonth))
+      logger.error('buy ' + str(response['buy'][indexOfMonth]))
+
+      data['daysell'] = (response['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
+      data['daybuy'] = (abs(response['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
+      data['daycon'] = (abs(response['con'][indexOfMonth]), 'mdi:home', 'Wh')
+      data['dayenergy'] = (response['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
+
       return data
