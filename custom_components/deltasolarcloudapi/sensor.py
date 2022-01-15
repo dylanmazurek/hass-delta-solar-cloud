@@ -47,7 +47,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Setup the Delta Solar Cloud sensors."""
 
-    api = DeltaSolarCloud(config.get(CONF_USERNAME), config.get(CONF_PASSWORD), '23400', 'O9Y20300564WB') #config.get(CONF_PLANT_ID), config.get(CONF_SERIAL))
+    api = DeltaSolarCloud(config.get(CONF_USERNAME), config.get(CONF_PASSWORD), '23400', 'O9Y20300564WB', 10) #config.get(CONF_PLANT_ID), config.get(CONF_SERIAL))
 
     async def async_update_data():
         """ fetch data from the Delta Solar Cloud website"""
