@@ -103,36 +103,37 @@ class DeltaSolarCloud(object):
       
       dataDay = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'day')
 
-      arrayLength = (len(dataDay['sell']) - 1)
+      arrayLengthDay = (len(dataDay['sell']) - 1)
 
       data = {}
-      if arrayLength > 0:
-        data['sell'] = (dataDay['sell'][arrayLength], 'mdi:transmission-tower-export', 'W')
-        data['buy'] = (abs(dataDay['buy'][arrayLength]), 'mdi:transmission-tower-import', 'W')
-        data['con'] = (abs(dataDay['con'][arrayLength]), 'mdi:home', 'W')
-        data['energy'] = (dataDay['tip'][arrayLength], 'mdi:brightness-7', 'W')
-
-        dataMonth = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'month')
-
-        date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
-        indexOfMonth = dataMonth['ts'].index(date)
-
-        data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
-        data['daybuy'] = (abs(dataMonth['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
-        data['daycon'] = (abs(dataMonth['con'][indexOfMonth]), 'mdi:home', 'Wh')
-        data['dayenergy'] = (dataMonth['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
-
-        return data
+      if arrayLengthDay > 0:
+        data['sell'] = (dataDay['sell'][arrayLengthDay], 'mdi:transmission-tower-export', 'W')
+        data['buy'] = (abs(dataDay['buy'][arrayLengthDay]), 'mdi:transmission-tower-import', 'W')
+        data['con'] = (abs(dataDay['con'][arrayLengthDay]), 'mdi:home', 'W')
+        data['energy'] = (dataDay['tip'][arrayLengthDay], 'mdi:brightness-7', 'W')
       else:
         data['sell'] = (0, 'mdi:transmission-tower-export', 'W')
         data['buy'] = (0, 'mdi:transmission-tower-import', 'W')
         data['con'] = (0, 'mdi:home', 'W')
         data['energy'] = (0, 'mdi:brightness-7', 'W')
 
+      now = datetime.now()
+      dataMonth = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'month')
+      date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
+      indexOfMonth = dataMonth['ts'].index(date)
+
+      dataTest = dataMonth['sell'][indexOfMonth]
+
+      if(dataTest is not None):
+        data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
+        data['daybuy'] = (abs(dataMonth['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
+        data['daycon'] = (abs(dataMonth['con'][indexOfMonth]), 'mdi:home', 'Wh')
+        data['dayenergy'] = (dataMonth['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
+      else:
         data['daysell'] = (0, 'mdi:transmission-tower-export', 'Wh')
         data['daybuy'] = (0, 'mdi:transmission-tower-import', 'Wh')
         data['daycon'] = (0, 'mdi:home', 'Wh')
         data['dayenergy'] = (0, 'mdi:brightness-7', 'Wh')
-
-        return data
+      
+      return data
       
