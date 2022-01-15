@@ -4,8 +4,8 @@ Author: dylanmazurek
 https://github.com/DylanMazurek/hass-delta-solar-cloud
 """
 import requests
-import datetime
 import logging
+from datetime import datetime, timedelta
 from collections import defaultdict
 
 # from .const import (
@@ -15,11 +15,12 @@ from collections import defaultdict
 class DeltaSolarCloud(object):
     """ Wrapper class for DeltaSolarCloud"""
 
-    def __init__(self, username, password, plantid, serial):
+    def __init__(self, username, password, plantid, serial, timezone):
         self.username = username
         self.password = password
         self.serial = serial
         self.plantid = plantid
+        self.timezone = timezone
 
     def get_cookie(self):
       """Use api to get data"""
@@ -53,17 +54,7 @@ class DeltaSolarCloud(object):
 
       return cookie
 
-    def fetch_data(self):
-      """Use api to get live data"""
-      url = "https://mydeltasolar.deltaww.com/AjaxPlantUpdatePlant.php"
-
-      cookie = self.get_cookie()
-
-      logger = logging.getLogger("blah")
-      logger.setLevel(logging.INFO)
-
-      logger.error('cookie ' + cookie)
-
+    def fetch_api_data(self, cookie, datetime, plantid, serial, type):
       headers = {
         'Host': 'mydeltasolar.deltaww.com',
         'Connection': 'keep-alive',
@@ -83,69 +74,65 @@ class DeltaSolarCloud(object):
         'Cookie': 'sec_session_id=' + cookie
       }
       
-      now = datetime.datetime.now()
-
       payload = {
         'item': 'energy',
-        'unit': 'day',
-        'sn': self.serial,
+        'unit': type,
+        'sn': serial,
         'inv_num': '1',
         'is_inv': '1',
-        'year': now.strftime('%Y'),
-        'month': now.strftime('%m').lstrip("0"),
-        'day': now.strftime('%d').lstrip("0"),
-        'plant_id': self.plantid,
+        'year': datetime.strftime('%Y'),
+        'month': datetime.strftime('%m').lstrip("0"),
+        'day': datetime.strftime('%d').lstrip("0"),
+        'plant_id': plantid,
         'start_date': '2020-11-13',
         'plt_type': '2',
         'mtnm': '1',
         'timezone': '10'
       }
 
-      response = requests.request("POST", url, headers = headers, data = payload).json()
+      url = "https://mydeltasolar.deltaww.com/AjaxPlantUpdatePlant.php"
 
-      arrayLength = (len(response['sell']) - 1)
+      return requests.request("POST", url, headers = headers, data = payload).json()
 
-      import json
-      logger.error('payload ' + json.dumps(payload))
-      logger.error('array length ' + str(arrayLength))
-      logger.error('buy ' + str(response['buy'][arrayLength]))
+    def fetch_data(self):
+      """Use api to get live data"""
+
+      cookie = self.get_cookie()
+
+      now = datetime.utcnow() + timedelta(hours=self.timezone)
+      
+      dataDay = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'day')
+
+      arrayLength = (len(dataDay['sell']) - 1)
 
       data = {}
+      if arrayLength > 0:
+        data['sell'] = (dataDay['sell'][arrayLength], 'mdi:transmission-tower-export', 'W')
+        data['buy'] = (abs(dataDay['buy'][arrayLength]), 'mdi:transmission-tower-import', 'W')
+        data['con'] = (abs(dataDay['con'][arrayLength]), 'mdi:home', 'W')
+        data['energy'] = (dataDay['tip'][arrayLength], 'mdi:brightness-7', 'W')
 
-      data['sell'] = (response['sell'][arrayLength], 'mdi:transmission-tower-export', 'W')
-      data['buy'] = (abs(response['buy'][arrayLength]), 'mdi:transmission-tower-import', 'W')
-      data['con'] = (abs(response['con'][arrayLength]), 'mdi:home', 'W')
-      data['energy'] = (response['tip'][arrayLength], 'mdi:brightness-7', 'W')
+        dataMonth = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'month')
 
-      payload2 = {
-        'item': 'energy',
-        'unit': 'month',
-        'sn': self.serial,
-        'inv_num': '1',
-        'is_inv': '1',
-        'year': now.strftime('%Y'),
-        'month': now.strftime('%m').lstrip("0"),
-        'day': now.strftime('%d').lstrip("0"),
-        'plant_id': self.plantid,
-        'start_date': '2020-11-13',
-        'plt_type': '2',
-        'mtnm': '1',
-        'timezone': '10'
-      }
+        date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
+        indexOfMonth = dataMonth['ts'].index(date)
 
-      response = requests.request("POST", url, headers = headers, data = payload2).json()
+        data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
+        data['daybuy'] = (abs(dataMonth['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
+        data['daycon'] = (abs(dataMonth['con'][indexOfMonth]), 'mdi:home', 'Wh')
+        data['dayenergy'] = (dataMonth['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
 
-      date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
-      indexOfMonth = response['ts'].index(date)
+        return data
+      else:
+        data['sell'] = (0, 'mdi:transmission-tower-export', 'W')
+        data['buy'] = (0, 'mdi:transmission-tower-import', 'W')
+        data['con'] = (0, 'mdi:home', 'W')
+        data['energy'] = (0, 'mdi:brightness-7', 'W')
 
-      import json
-      logger.error('payload ' + json.dumps(payload2))
-      logger.error('array length ' + str(indexOfMonth))
-      logger.error('buy ' + str(response['buy'][indexOfMonth]))
+        data['daysell'] = (0, 'mdi:transmission-tower-export', 'Wh')
+        data['daybuy'] = (0, 'mdi:transmission-tower-import', 'Wh')
+        data['daycon'] = (0, 'mdi:home', 'Wh')
+        data['dayenergy'] = (0, 'mdi:brightness-7', 'Wh')
 
-      data['daysell'] = (response['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
-      data['daybuy'] = (abs(response['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
-      data['daycon'] = (abs(response['con'][indexOfMonth]), 'mdi:home', 'Wh')
-      data['dayenergy'] = (response['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
-
-      return data
+        return data
+      
