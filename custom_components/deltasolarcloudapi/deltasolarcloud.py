@@ -5,6 +5,7 @@ https://github.com/DylanMazurek/hass-delta-solar-cloud
 """
 import requests
 import logging
+import datetime as dt
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -124,8 +125,8 @@ class DeltaSolarCloud(object):
 
       dataTest = dataMonth['sell'][indexOfMonth]
 
-      spikeBlock = (int(now.strftime('%H').lstrip('0')) < 4 and dataMonth['energy'][indexOfMonth] > 2000)
-      logging.error('{}-{}-{}'.format(now.strftime('%H').lstrip('0'), spikeBlock, dataMonth['energy'][indexOfMonth]))
+      spikeBlock = (dt.datetime.today().hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
+      logging.error('{}-{}-{}'.format(dt.datetime.today().hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
 
       if(dataTest is not None and not spikeBlock):
         data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
