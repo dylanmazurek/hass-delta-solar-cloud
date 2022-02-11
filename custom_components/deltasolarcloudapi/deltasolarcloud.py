@@ -100,9 +100,9 @@ class DeltaSolarCloud(object):
 
       cookie = self.get_cookie()
 
-      now = datetime.utcnow() + timedelta(hours=self.timezone)
+      nowlocal = datetime.utcnow() + timedelta(hours=self.timezone)
       
-      dataDay = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'day')
+      dataDay = self.fetch_api_data(cookie, nowlocal, self.plantid, self.serial, 'day')
 
       arrayLengthDay = (len(dataDay['sell']) - 1)
 
@@ -118,15 +118,15 @@ class DeltaSolarCloud(object):
         data['con'] = (0, 'mdi:home', 'W')
         data['energy'] = (0, 'mdi:brightness-7', 'W')
 
-      now = datetime.now()
-      dataMonth = self.fetch_api_data(cookie, now, self.plantid, self.serial, 'month')
-      date = '{}-{}-{}'.format(now.strftime('%Y'), now.strftime('%m'), now.strftime('%d'))
+      nowutc = datetime.now()
+      dataMonth = self.fetch_api_data(cookie, nowutc, self.plantid, self.serial, 'month')
+      date = '{}-{}-{}'.format(nowutc.strftime('%Y'), nowutc.strftime('%m'), nowutc.strftime('%d'))
       indexOfMonth = dataMonth['ts'].index(date)
 
       dataTest = dataMonth['sell'][indexOfMonth]
 
-      spikeBlock = (now.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
-      logging.error('{}-{}-{}'.format(now.hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
+      spikeBlock = (nowlocal.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
+      logging.error('{}-{}-{}'.format(nowlocal.hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
 
       if(dataTest is not None and not spikeBlock):
         data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
