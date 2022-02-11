@@ -125,8 +125,8 @@ class DeltaSolarCloud(object):
 
       dataTest = dataMonth['sell'][indexOfMonth]
 
-      spikeBlock = (dt.datetime.today().hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
-      logging.error('{}-{}-{}'.format(dt.datetime.today().hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
+      spikeBlock = (now.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
+      logging.error('{}-{}-{}'.format(now.hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
 
       if(dataTest is not None and not spikeBlock):
         data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
