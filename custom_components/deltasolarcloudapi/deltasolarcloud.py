@@ -125,7 +125,10 @@ class DeltaSolarCloud(object):
 
       dataTest = dataMonth['sell'][indexOfMonth]
 
-      spikeBlock = (nowlocal.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
+      #curEn = (dataMonth['energy'][indexOfMonth] != null ? dataMonth['energy'][indexOfMonth] : 0);
+
+      #spikeBlock = (nowlocal.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
+      spikeBlock = False;
       logging.error('{}-{}-{}'.format(nowlocal.hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
 
       if(dataTest is not None and not spikeBlock):
