@@ -3,15 +3,8 @@ Gets sensor data from Delta Solar Cloud.
 Author: dylanmazurek
 https://github.com/DylanMazurek/hass-delta-solar-cloud
 """
-import requests
-import logging
-import datetime as dt
+import requests, logging, time
 from datetime import datetime, timedelta
-from collections import defaultdict
-
-# from .const import (
-#     _LOGGER
-# )
 
 class DeltaSolarCloud(object):
     """ Wrapper class for DeltaSolarCloud"""
@@ -22,6 +15,7 @@ class DeltaSolarCloud(object):
         self.serial = serial
         self.plantid = plantid
         self.timezone = timezone
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     def get_cookie(self):
       """Use api to get data"""
@@ -97,7 +91,6 @@ class DeltaSolarCloud(object):
 
     def fetch_data(self):
       """Use api to get live data"""
-
       cookie = self.get_cookie()
 
       nowlocal = datetime.utcnow() + timedelta(hours=self.timezone)
@@ -124,12 +117,12 @@ class DeltaSolarCloud(object):
       indexOfMonth = dataMonth['ts'].index(date)
 
       dataTest = dataMonth['sell'][indexOfMonth]
-
+      
       #curEn = (dataMonth['energy'][indexOfMonth] != null ? dataMonth['energy'][indexOfMonth] : 0);
 
-      #spikeBlock = (nowlocal.hour < 4 and dataMonth['energy'][indexOfMonth] > 2000)
-      spikeBlock = False;
-      logging.error('{}-{}-{}'.format(nowlocal.hour, spikeBlock, dataMonth['energy'][indexOfMonth]))
+      spikeBlock = (nowlocal.hour + (time.localtime().tm_isdst) == 1)
+
+      logging.info('{}-{}-{}'.format(nowlocal.hour + (time.localtime().tm_isdst), spikeBlock, dataMonth['energy'][indexOfMonth]))
 
       if(dataTest is not None and not spikeBlock):
         data['daysell'] = (dataMonth['sell'][indexOfMonth], 'mdi:transmission-tower-export', 'Wh')
