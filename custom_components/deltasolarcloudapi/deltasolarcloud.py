@@ -120,7 +120,8 @@ class DeltaSolarCloud(object):
       
       #curEn = (dataMonth['energy'][indexOfMonth] != null ? dataMonth['energy'][indexOfMonth] : 0);
 
-      spikeBlock = (nowlocal.hour + (time.localtime().tm_isdst) == 1)
+      currentHour = (nowlocal.hour + (time.localtime().tm_isdst) == 1)
+      spikeBlock = (currentHour < 4)
 
       logging.info('{}-{}-{}'.format(nowlocal.hour + (time.localtime().tm_isdst), spikeBlock, dataMonth['energy'][indexOfMonth]))
 
@@ -131,8 +132,8 @@ class DeltaSolarCloud(object):
         data['dayenergy'] = (dataMonth['energy'][indexOfMonth], 'mdi:brightness-7', 'Wh')
       else:
         data['daysell'] = (0, 'mdi:transmission-tower-export', 'Wh')
-        data['daybuy'] = (0, 'mdi:transmission-tower-import', 'Wh')
-        data['daycon'] = (0, 'mdi:home', 'Wh')
+        data['daybuy'] = (abs(dataMonth['buy'][indexOfMonth]), 'mdi:transmission-tower-import', 'Wh')
+        data['daycon'] = (abs(dataMonth['con'][indexOfMonth]), 'mdi:home', 'Wh')
         data['dayenergy'] = (0, 'mdi:brightness-7', 'Wh')
       
       return data
