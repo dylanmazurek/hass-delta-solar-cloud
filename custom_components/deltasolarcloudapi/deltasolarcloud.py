@@ -120,7 +120,7 @@ class DeltaSolarCloud(object):
       
       #curEn = (dataMonth['energy'][indexOfMonth] != null ? dataMonth['energy'][indexOfMonth] : 0);
 
-      currentHour = (nowlocal.hour + (time.localtime().tm_isdst) == 1)
+      currentHour = (nowlocal.hour + time.localtime().tm_isdst)
       spikeBlock = (currentHour < 4)
 
       logging.info('{}-{}-{}'.format(nowlocal.hour + (time.localtime().tm_isdst), spikeBlock, dataMonth['energy'][indexOfMonth]))
